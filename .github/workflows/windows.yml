@@ -1,0 +1,43 @@
+
+name: Construir ejecutable Windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  construir:
+    runs-on: windows-latest
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install PySide6 pyinstaller
+
+      - name: Ejecutar pruebas
+        run: |
+          python -m unittest discover -s tests -p "test_*.py"
+
+      - name: Crear ejecutable
+        run: |
+          python -m PyInstaller --noconfirm --clean --windowed --onedir --paths . --name AsistenteFacturacion src/interfaz.py
+
+
+      - name: Preparar archivo ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/AsistenteFacturacion -DestinationPath AsistenteFacturacion-Windows.zip
+
+      - name: Guardar ejecutable descargable
+        uses: actions/upload-artifact@v4
+        with:
+          name: AsistenteFacturacion-Windows
+          path: AsistenteFacturacion-Windows.zip
