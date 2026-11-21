@@ -1,0 +1,21 @@
+# Entorno virtual de Python
+.venv/
+venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Configuración local
+.env
+.vscode/
+
+# Bases de datos locales
+*.db
+*.sqlite3
+
+# Archivos generados
+build/
+dist/
+*.spec
