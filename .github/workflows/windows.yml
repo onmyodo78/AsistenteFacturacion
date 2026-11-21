@@ -28,8 +28,7 @@ jobs:
 
       - name: Crear ejecutable
         run: |
-          python -m PyInstaller --noconfirm --clean --windowed --onedir --paths . --name AsistenteFacturacion src/interfaz.py
-
+          python -m PyInstaller --noconfirm --clean --windowed --onedir --paths . --collect-all PySide6 --collect-all shiboken6 --name AsistenteFacturacion src/interfaz.py
 
       - name: Preparar archivo ZIP
         shell: pwsh
