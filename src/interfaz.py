@@ -1,6 +1,8 @@
 
 import sys
 
+from PySide6.QtCore import Qt
+
 from PySide6.QtWidgets import (
     QApplication,
     QWidget,
@@ -24,6 +26,11 @@ def formato_euros(importe):
 def iniciar_aplicacion():
     app = QApplication(sys.argv)
 
+    distribucion = QVBoxLayout()
+    distribucion.setAlignment(Qt.AlignmentFlag.AlignTop)
+    distribucion.setSpacing(12)
+    distribucion.setContentsMargins(20, 20, 20, 20)
+
     ventana = QWidget()
     ventana.setWindowTitle(
         "Asistente de Facturación y Verificación Contable"
@@ -32,10 +39,20 @@ def iniciar_aplicacion():
 
     distribucion = QVBoxLayout()
 
+    
     titulo = QLabel(
         "Asistente de Facturación y Verificación Contable"
     )
+    titulo.setStyleSheet("""
+        QLabel {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e3a5f;
+            padding-bottom: 8px;
+        }
+    """)
     distribucion.addWidget(titulo)
+
 
     descripcion = QLabel(
         "Verificación de facturas, IVA, retenciones y lotes."
@@ -67,10 +84,27 @@ def iniciar_aplicacion():
     )
     etiqueta_resultado.setWordWrap(True)
 
+
+    def aplicar_estilo_resultado(color_fondo, color_texto):
+        etiqueta_resultado.setStyleSheet(f"""
+            QLabel {{
+                background-color: {color_fondo};
+                color: {color_texto};
+                border-radius: 6px;
+                padding: 14px;
+                font-size: 13px;
+            }}
+        """)
+
+    aplicar_estilo_resultado("#e9ecef", "#343a40")
+
+
     def limpiar_resultado():
         etiqueta_resultado.setText(
             "Resultado: pendiente de verificación"
         )
+        aplicar_estilo_resultado("#e9ecef", "#343a40")
+
 
     campo_base.textChanged.connect(limpiar_resultado)
     campo_iva.textChanged.connect(limpiar_resultado)
@@ -97,10 +131,14 @@ def iniciar_aplicacion():
             total_declarado = factura["total_declarado"]
             diferencia = factura["diferencia"]
 
+
             if resultado["sin_incidencias"]:
                 estado = "CORRECTA"
+                aplicar_estilo_resultado("#d4edda", "#155724")
             else:
                 estado = "CON DIFERENCIAS"
+                aplicar_estilo_resultado("#f8d7da", "#721c24")
+
 
             etiqueta_resultado.setText(
                 f"Estado: {estado}\n\n"
@@ -137,9 +175,31 @@ def iniciar_aplicacion():
                 str(error)
             )
 
+
     boton = QPushButton("Verificar factura")
+    boton.setMinimumHeight(40)
+    boton.setStyleSheet("""
+        QPushButton {
+            background-color: #1e3a5f;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        QPushButton:hover {
+            background-color: #2c5282;
+        }
+
+        QPushButton:pressed {
+            background-color: #142b47;
+        }
+    """)
     boton.clicked.connect(verificar_datos)
     distribucion.addWidget(boton)
+
 
     distribucion.addWidget(etiqueta_resultado)
 
