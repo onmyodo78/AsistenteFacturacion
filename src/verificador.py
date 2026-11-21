@@ -1,9 +1,27 @@
 
 from decimal import Decimal, ROUND_HALF_UP
+from src.importes import interpretar_importe
+
 
 
 def dinero(valor):
-    return Decimal(str(valor)).quantize(
+    if isinstance(valor, str):
+        # Compatibilidad con los importes internos
+        # escritos con dos decimales y punto.
+        if (
+            valor.count(".") == 1
+            and "," not in valor
+            and "€" not in valor
+            and valor.replace(".", "").lstrip("-").isdigit()
+            and len(valor.split(".")[1]) == 2
+        ):
+            importe = Decimal(valor)
+        else:
+            importe = interpretar_importe(valor)
+    else:
+        importe = interpretar_importe(valor)
+
+    return importe.quantize(
         Decimal("0.01"),
         rounding=ROUND_HALF_UP
     )

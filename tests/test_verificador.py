@@ -44,5 +44,24 @@ class TestVerificador(unittest.TestCase):
         self.assertTrue(resultado["todas_correctas"])
 
 
+    def test_factura_con_importes_espanoles(self):
+        resultado = verificar_factura(
+            "1.000,00 €",
+            "210,00 €",
+            "150,00 €",
+            "1.060,00 €"
+        )
+
+        self.assertTrue(resultado["correcta"])
+        self.assertEqual(
+            resultado["total_calculado"],
+            Decimal("1060.00")
+        )
+        self.assertEqual(
+            resultado["diferencia"],
+            Decimal("0.00")
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
