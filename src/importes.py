@@ -25,7 +25,7 @@ def interpretar_importe(valor):
     patron_espanol_simple = r"-?\d+,\d{1,2}"
 
     # Formato decimal con punto: 1950.00
-    patron_decimal_punto = r"-?\d{4,}\.\d{2}"
+    patron_decimal_punto = r"-?\d+\.\d{2}"
 
     # Números enteros: 1950
     patron_entero = r"-?\d+"

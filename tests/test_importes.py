@@ -11,6 +11,18 @@ class TestImportes(unittest.TestCase):
         resultado = interpretar_importe("1950.00")
         self.assertEqual(resultado, Decimal("1950.00"))
 
+    def test_decimal_con_punto_y_pocas_cifras(self):
+        casos = {
+            "119.35": Decimal("119.35"),
+            "25.06": Decimal("25.06"),
+            "144.41": Decimal("144.41"),
+            "12.34": Decimal("12.34"),
+        }
+
+        for texto, esperado in casos.items():
+            with self.subTest(texto=texto):
+                self.assertEqual(interpretar_importe(texto), esperado)
+
     def test_coma_decimal(self):
         resultado = interpretar_importe("1950,00")
         self.assertEqual(resultado, Decimal("1950.00"))
@@ -49,7 +61,7 @@ class TestImportes(unittest.TestCase):
             "1.95,0",
             "1,2,3",
             "1.23.456,78",
-            "12.34",
+            "1.000",
         ]
 
         for valor in valores_invalidos:

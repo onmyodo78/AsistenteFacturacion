@@ -7,7 +7,7 @@ from src.entrada_facturas import preparar_factura
 
 class TestEntradaFacturas(unittest.TestCase):
 
-    def test_factura_espanola(self):
+    def test_factura_española(self):
         datos = {
             "base": "1.000,00 €",
             "iva": "210,00 €",
@@ -26,7 +26,7 @@ class TestEntradaFacturas(unittest.TestCase):
 
     def test_importe_ambiguo(self):
         datos = {
-            "base": "12.34",
+            "base": "1.000",
             "iva": "2,59",
             "total": "14,93"
         }
