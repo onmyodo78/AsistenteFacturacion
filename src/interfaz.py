@@ -37,9 +37,6 @@ def iniciar_aplicacion():
     )
     ventana.resize(650, 400)
 
-    distribucion = QVBoxLayout()
-
-    
     titulo = QLabel(
         "Asistente de Facturación y Verificación Contable"
     )
@@ -69,9 +66,22 @@ def iniciar_aplicacion():
     campo_iva.setPlaceholderText("Ejemplo: 210,00")
     formulario.addRow("IVA (€):", campo_iva)
 
+
+    campo_porcentaje_iva = QLineEdit()
+    campo_porcentaje_iva.setPlaceholderText("Ejemplo: 21")
+    formulario.addRow("IVA (%):", campo_porcentaje_iva)
+
+
     campo_retencion = QLineEdit()
     campo_retencion.setPlaceholderText("Ejemplo: 150,00")
     formulario.addRow("Retención (€):", campo_retencion)
+
+    campo_porcentaje_retencion = QLineEdit()
+    campo_porcentaje_retencion.setPlaceholderText("Ejemplo: 15")
+    formulario.addRow(
+        "Retención (%):",
+        campo_porcentaje_retencion
+    )
 
     campo_total = QLineEdit()
     campo_total.setPlaceholderText("Ejemplo: 1.060,00")
@@ -103,13 +113,17 @@ def iniciar_aplicacion():
         etiqueta_resultado.setText(
             "Resultado: pendiente de verificación"
         )
+
         aplicar_estilo_resultado("#e9ecef", "#343a40")
 
 
     campo_base.textChanged.connect(limpiar_resultado)
     campo_iva.textChanged.connect(limpiar_resultado)
+    campo_porcentaje_iva.textChanged.connect(limpiar_resultado)
     campo_retencion.textChanged.connect(limpiar_resultado)
+    campo_porcentaje_retencion.textChanged.connect(limpiar_resultado)
     campo_total.textChanged.connect(limpiar_resultado)
+
 
     def verificar_datos():
         datos = {
@@ -118,6 +132,17 @@ def iniciar_aplicacion():
             "retencion": campo_retencion.text() or "0",
             "total": campo_total.text(),
         }
+
+        if campo_porcentaje_iva.text().strip():
+            datos["porcentaje_iva"] = (
+                campo_porcentaje_iva.text().strip()
+            )
+
+        if campo_porcentaje_retencion.text().strip():
+            datos["porcentaje_retencion"] = (
+                campo_porcentaje_retencion.text().strip()
+            )
+
 
         try:
             resultado = verificar_lote_desde_texto(
@@ -132,6 +157,21 @@ def iniciar_aplicacion():
             diferencia = factura["diferencia"]
 
 
+            incidencias = resultado["incidencias"]
+            detalle_incidencias = ""
+
+            if incidencias:
+                detalle_incidencias = "\n\nIncidencias detectadas:"
+
+                for incidencia in incidencias:
+                    tipo = incidencia["tipo"]
+                    importe = incidencia["diferencia"]
+
+                    detalle_incidencias += (
+                        f"\n- {tipo}: {formato_euros(importe)} €"
+                    )
+
+
             if resultado["sin_incidencias"]:
                 estado = "CORRECTA"
                 aplicar_estilo_resultado("#d4edda", "#155724")
@@ -144,8 +184,23 @@ def iniciar_aplicacion():
                 f"Estado: {estado}\n\n"
                 f"Total calculado: {formato_euros(total_calculado)} €\n"
                 f"Total declarado: {formato_euros(total_declarado)} €\n"
-                f"Diferencia: {formato_euros(diferencia)} €"
+                f"Diferencia del total: {formato_euros(diferencia)} €"
+                f"{detalle_incidencias}"
             )
+
+            incidencias = resultado["incidencias"]
+
+            if incidencias:
+                detalle_incidencias = "\n\nIncidencias detectadas:"
+                for incidencia in incidencias:
+                    tipo = incidencia["tipo"]
+                    importe = incidencia["diferencia"]
+                    detalle_incidencias += (
+                        f"\n- {tipo}: {formato_euros(importe)} €"
+                    )
+            else:
+                detalle_incidencias = ""
+
 
             if resultado["sin_incidencias"]:
                 QMessageBox.information(
@@ -153,17 +208,18 @@ def iniciar_aplicacion():
                     "Resultado",
                     "La factura es correcta."
                 )
+
             else:
                 QMessageBox.warning(
                     ventana,
                     "Factura con diferencias",
                     (
-                        "La factura presenta diferencias.\n\n"
-                        f"Diferencia: {formato_euros(diferencia)} €\n\n"
-                        "Importe positivo: el total declarado es mayor.\n"
-                        "Importe negativo: el total declarado es menor."
+                        "La factura presenta incidencias.\n\n"
+                        f"Diferencia del total: {formato_euros(diferencia)} €"
+                        f"{detalle_incidencias}"
                     )
                 )
+
 
         except (ValueError, KeyError) as error:
             etiqueta_resultado.setText(

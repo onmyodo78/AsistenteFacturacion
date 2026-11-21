@@ -86,5 +86,39 @@ class TestEntradaFacturas(unittest.TestCase):
         )
 
 
+    def test_porcentajes_validos(self):
+        datos = {
+            "base": "1000",
+            "iva": "210",
+            "retencion": "150",
+            "total": "1060",
+            "porcentaje_iva": "21",
+            "porcentaje_retencion": "15",
+        }
+
+        factura = preparar_factura(datos)
+
+        self.assertEqual(
+            factura["porcentaje_iva"],
+            Decimal("21")
+        )
+        self.assertEqual(
+            factura["porcentaje_retencion"],
+            Decimal("15")
+        )
+
+    def test_porcentajes_invalidos(self):
+        for porcentaje in ("abc", "-21", "150", "NaN"):
+            datos = {
+                "base": "1000",
+                "iva": "210",
+                "total": "1210",
+                "porcentaje_iva": porcentaje,
+            }
+
+            with self.subTest(porcentaje=porcentaje):
+                with self.assertRaises(ValueError):
+                    preparar_factura(datos)
+
 if __name__ == "__main__":
     unittest.main()
