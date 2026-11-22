@@ -35,6 +35,41 @@ class TestConceptos(unittest.TestCase):
         with self.assertRaises(ValueError):
             sumar_conceptos(conceptos)
 
+    def test_desglose_preventivo_cuadrado(self):
+        from src.conceptos import comprobar_desglose_preventivo
+
+        conceptos = [
+            {"descripcion": "Servicio", "importe": "80,00"},
+            {"descripcion": "Material", "importe": "20,00"},
+        ]
+
+        resultado = comprobar_desglose_preventivo("100,00", conceptos)
+
+        self.assertEqual(resultado, Decimal("0.00"))
+
+    def test_desglose_preventivo_con_diferencia(self):
+        from src.conceptos import comprobar_desglose_preventivo
+
+        conceptos = [
+            {"descripcion": "Servicio", "importe": "80,00"},
+            {"descripcion": "Material", "importe": "19,50"},
+        ]
+
+        resultado = comprobar_desglose_preventivo("100,00", conceptos)
+
+        self.assertEqual(resultado, Decimal("0.50"))
+
+    def test_desglose_preventivo_incompleto(self):
+        from src.conceptos import comprobar_desglose_preventivo
+
+        conceptos = [
+            {"descripcion": "Servicio", "importe": "80,00"},
+            {"descripcion": "Material", "importe": ""},
+        ]
+
+        resultado = comprobar_desglose_preventivo("100,00", conceptos)
+
+        self.assertIsNone(resultado)
 
 if __name__ == "__main__":
     unittest.main()

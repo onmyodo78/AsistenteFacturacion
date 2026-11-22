@@ -17,8 +17,9 @@ from PySide6.QtWidgets import (
 )
 
 from src.entrada_facturas import verificar_lote_desde_texto
-from src.conceptos import sumar_conceptos
+from src.conceptos import sumar_conceptos, comprobar_desglose_preventivo
 from src.importes import interpretar_importe
+from src.avisos_preventivos import generar_avisos_preventivos
 
 def formato_euros(importe):
     """Muestra un importe con formato español."""
@@ -128,7 +129,10 @@ def iniciar_aplicacion():
 
         campo_importe = QLineEdit()
         campo_importe.setPlaceholderText("Importe (€)")
-
+        
+        campo_descripcion.textChanged.connect(limpiar_resultado)
+        campo_importe.textChanged.connect(limpiar_resultado)
+        
         fila.addWidget(campo_descripcion, 3)
         fila.addWidget(campo_importe, 1)
 
@@ -154,6 +158,8 @@ def iniciar_aplicacion():
 
             distribucion_conceptos.removeItem(fila)
             fila.deleteLater()
+
+            limpiar_resultado()
 
         boton_eliminar.clicked.connect(eliminar_concepto)
 
@@ -181,12 +187,62 @@ def iniciar_aplicacion():
     aplicar_estilo_resultado("#e9ecef", "#343a40")
 
 
+
     def limpiar_resultado():
         etiqueta_resultado.setText(
             "Resultado: pendiente de verificación"
         )
-
         aplicar_estilo_resultado("#e9ecef", "#343a40")
+
+        datos = {
+            "base": campo_base.text(),
+            "iva": campo_iva.text(),
+            "porcentaje_iva": campo_porcentaje_iva.text(),
+            "retencion": campo_retencion.text(),
+            "porcentaje_retencion": campo_porcentaje_retencion.text(),
+            "total": campo_total.text(),
+        }
+
+        conceptos = []
+
+        for campo_descripcion, campo_importe in filas_conceptos:
+            descripcion = campo_descripcion.text().strip()
+            importe = campo_importe.text().strip()
+
+            if not descripcion and not importe:
+                continue
+
+            conceptos.append({
+                "descripcion": descripcion,
+                "importe": importe,
+            })
+
+        avisos = generar_avisos_preventivos(datos, conceptos)
+
+        if not avisos:
+            return
+
+        lineas = [
+            "Resultado: pendiente de verificación",
+            "",
+            "Avisos preventivos:",
+        ]
+
+        for aviso in avisos:
+            lineas.append("")
+            lineas.append(aviso["mensaje"])
+            lineas.append(
+                f"Diferencia: {formato_euros(aviso['diferencia'])} €"
+            )
+
+        lineas.extend([
+            "",
+            "Estos avisos son provisionales. "
+            "Pulsa Verificar para comprobar la factura.",
+        ])
+
+        etiqueta_resultado.setText("\n".join(lineas))
+        aplicar_estilo_resultado("#fff3cd", "#856404")
 
 
     campo_base.textChanged.connect(limpiar_resultado)
