@@ -30,10 +30,13 @@ jobs:
         run: |
           python -m PyInstaller --noconfirm --clean --windowed --onedir --paths . --name AsistenteFacturacion src/interfaz.py
 
+
       - name: Preparar archivo ZIP
         shell: pwsh
         run: |
+          Copy-Item LEAME.md dist/AsistenteFacturacion/LEAME.md
           Compress-Archive -Path dist/AsistenteFacturacion -DestinationPath AsistenteFacturacion-Windows.zip
+
 
       - name: Guardar ejecutable descargable
         uses: actions/upload-artifact@v4
