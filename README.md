@@ -2,6 +2,8 @@
 
 **Herramienta de apoyo para comprobar importes y detectar diferencias en facturas.**
 
+[Descargas para Windows](https://github.com/onmyodo78/AsistenteFacturacion/releases) · [English overview](#english-overview) · [Licencia MIT](LICENSE)
+
 ## 1. ¿Para qué sirve?
 
 AsistenteFacturacion permite introducir manualmente importes de una factura y comprobar si las operaciones matemáticas cuadran.
@@ -107,3 +109,22 @@ Utiliza AsistenteFacturacion como una segunda comprobación de los números.
 Si aparece una diferencia, revisa los importes originales antes de corregir la factura o realizar cualquier ajuste contable.
 
 El objetivo es **facilitar las comprobaciones cotidianas, no sustituir los procedimientos de la empresa**.
+
+## 9. Descargas y licencia
+
+Consulta las [versiones publicadas en GitHub Releases](https://github.com/onmyodo78/AsistenteFacturacion/releases) para descargar la aplicación para Windows.
+
+Proyecto desarrollado en Python con PySide6 y distribuido bajo la [licencia MIT](LICENSE).
+
+## English overview
+
+AsistenteFacturacion is a free, open-source desktop invoice calculation checker for small businesses and self-employed users.
+
+- Manually check invoice amounts, VAT rates and amounts, withholding taxes, totals and item breakdowns.
+- Receive preventive warnings while entering values and visual verification results.
+- Run locally without uploading invoice data to cloud services.
+- Use the packaged Windows application without installing Python, or run the Python/PySide6 source on Linux.
+
+The current documentation and interface are oriented towards Spanish-speaking users. This is an arithmetic checking tool, not accounting software or a tax compliance validator.
+
+[Windows downloads](https://github.com/onmyodo78/AsistenteFacturacion/releases) · [MIT License](LICENSE)
